@@ -3,7 +3,11 @@ import 'package:flutter/material.dart';
 class AuthBackground extends StatelessWidget {
   final Widget child;
 
-  const AuthBackground({Key key, @required this.child}) : super(key: key);
+  // como vemos cuando creamos el constructor de nuestro Widget AuthBackground()
+  // y por las caracteristicas de Dart y el nullsafety debemos de estableces
+  // como obligatorios u opcionales cada parametro recibido
+  // en este caso el parametro key es opcional y el parametro child es obligatorio por la instruccion "required"
+  const AuthBackground({Key? key, required this.child}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -30,6 +34,7 @@ class AuthBackground extends StatelessWidget {
           // y visualizar el Widget correctamente, ademas como vemos que la complejidad de este Widget esta creciendo
           // podemos extraerlo en otro Widget que vayamos a crear para visualizar el code de manera mas limpia y ordenada
           _HeaderIcon(),
+          this.child
         ],
       ),
     );
@@ -105,7 +110,7 @@ class _PurpleBox extends StatelessWidget {
         ));
   }
 
-  // debemos de distinguir entre crear un metodo que nos devuelva un Widget como en este caso
+  // debemos de distinguir entre crear un metodo para la logica de elementos complejos que no son Widgets
   // y crear un Widget independiente y que maneje estados
   BoxDecoration _purpleBoxDecorationBackground() => BoxDecoration(
           gradient: LinearGradient(colors: [
