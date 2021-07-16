@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 
 class AuthBackground extends StatelessWidget {
+  final Widget child;
+
+  const AuthBackground({Key key, @required this.child}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -19,8 +23,33 @@ class AuthBackground extends StatelessWidget {
           // como vemos el primer Widget de este stack sera el Widget _PurpleBox()
           // debemos de saber que tambien podemos modiciar la posicion de este Widget
           // con la propiedad alignment del Widget Stack()
-          _PurpleBox()
+          _PurpleBox(),
+          // necesitamos ubicar un Widget encima del Widget _PurpleBox()
+          // en este caso el Widget sera el icono del login
+          // recordemos que podemos usar un Widget SafeArea() para que no interrump el notch de algunos modelos de phones
+          // y visualizar el Widget correctamente, ademas como vemos que la complejidad de este Widget esta creciendo
+          // podemos extraerlo en otro Widget que vayamos a crear para visualizar el code de manera mas limpia y ordenada
+          _HeaderIcon(),
         ],
+      ),
+    );
+  }
+}
+
+class _HeaderIcon extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Container(
+        // con la propiedad "width" podemos definr cuanto espacio debe de ocupar el Widget en este caso en el Widget Container()
+        // pero la propiedad "child" que recibe un Widget tiene su propio size en este caso
+        // el Widget Icon() tiene el size de 100 pero el Widget padre es decir el Widget Container() Ocupa todo el espacio
+        // vertical posible puesto que su propiedad "width" recibe "double.infinity"
+        width: double.infinity,
+        // adicionalmente si queremos darle mas espacio que el que viene por defalt con el Widget SafeArea()
+        // podemos utilizar la propiedad "margin" para darle un espaciado adicional
+        margin: EdgeInsets.only(top: 24),
+        child: Icon(Icons.person_pin, color: Colors.white, size: 100),
       ),
     );
   }
