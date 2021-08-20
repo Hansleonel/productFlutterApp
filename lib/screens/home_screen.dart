@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:productos_app/screens/screens.dart';
 import 'package:productos_app/services/services.dart';
 import 'package:productos_app/widgets/widgets.dart';
 import 'package:provider/provider.dart';
@@ -14,6 +15,12 @@ class HomeScreen extends StatelessWidget {
     // recordar que es la misma instancia del ProductsService solo que necesitamos hacer este llamado
     final productsServices = Provider.of<ProductsService>(context);
 
+    // como sabemos la instancia productServices tiene un constructor que lanza el metodo "loadProducts()"
+    // al momento de lanzar dicho metodo, hacemos una peticion http que una vez resuelta hace uso del
+    // notifyListener() para actualizar todo el Widget en este caso todo el HomeScreen() puesto que hacemos uso del
+    // Provider dentro de su metodo "build()"
+    if (productsServices.isLoading) return LoadingScreen();
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Productos'),
@@ -22,14 +29,16 @@ class HomeScreen extends StatelessWidget {
       // el usuario vaya haciedno scroll, a diferncia de el Widget LisView() que crea de manera automatica todos los elementos ya que normalmente
       // usamos el Widget ListView() para listas pequeñs
       body: ListView.builder(
-          itemCount: 10,
+          itemCount: productsServices.products.length,
           itemBuilder: (BuildContext context, int index) {
             // en caso un Widget no tenga una propiedad con la cual pueda lanzar alguna funcion
             // como el "onTap" o "onPressed" podemos usar el Widget GestureDectector()
             // dicho Widget debe de encerrar al Widget al que queremos darle la accion en este caso
             // a el Widget ProductCard()
             return GestureDetector(
-              child: ProductCard(),
+              child: ProductCard(
+                product: productsServices.products[index],
+              ),
               // la accion que se lanzara al momento de usar la propiedad "onTap" sera movernos a otro Screen en este caso a ProductScreen()
               // pero de manera de que podamos volver a este Screen es decir a HomeScreen() para eso debemos de usar el "Navigator.pushNamed()
               onTap: () => Navigator.pushNamed(context, 'product'),

@@ -1,6 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:productos_app/models/models.dart';
 
 class ProductCard extends StatelessWidget {
+  // creando una propiedad del tipo Product
+  final Product product;
+
+  // creando el constructor para la propiedad product que en este caso sera
+  // required, ademas vemos que dicha propiedad es nominal
+  const ProductCard({Key? key, required this.product}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -21,14 +29,32 @@ class ProductCard extends StatelessWidget {
         child: Stack(
           alignment: Alignment.bottomLeft,
           children: [
-            _BackgroundImage(),
-            _ProductDetails(),
+            _BackgroundImage(
+              urlImage: product.picture,
+            ),
+            // como sabemos la propiedad "id" de nuestro Producto no es obligatoria
+            // pero tambien sabemos que llegado al punto de mostrar los productos
+            // sabemos que ya obtuvimos una respuesta de nuestra peticion http es por eso
+            // que debemos de asegurarle a Dart que la propiedad "id" si tiene un valor asignado
+            // con el signo "!" que nos permite realizar dicha acción
+            _ProductDetails(
+              title: product.name,
+              subTitle: product.id!,
+            ),
             // en caso le queramos dar una posicion fija a un Widget y no queremos que se guie de la
             // propiedad del Widget padre Stack() con su propiedad "aligment()"
             // debemos de envolver el Widget hijo con el Widget Positioned()
             // como vemos funcina estableciendo valores a sus propeidades "top", "rigth", "left", "bottom"
-            Positioned(top: 0, right: 0, child: _PriceTag()),
-            Positioned(top: 0, left: 0, child: _StatusAvailable())
+            Positioned(
+                top: 0,
+                right: 0,
+                child: _PriceTag(
+                  price: product.price,
+                )),
+            // en caso el valor de la propiedad "avialable" sea false
+            // mostrar el Widget "_StatusAvialable()"
+            if (!product.available)
+              Positioned(top: 0, left: 0, child: _StatusAvailable())
           ],
         ),
       ),
@@ -58,7 +84,7 @@ class _StatusAvailable extends StatelessWidget {
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 8),
           child: Text(
-            'Available',
+            'no disponible',
             style: TextStyle(color: Colors.white, fontSize: 18),
           ),
         ),
@@ -74,6 +100,10 @@ class _StatusAvailable extends StatelessWidget {
 }
 
 class _PriceTag extends StatelessWidget {
+  final double price;
+
+  const _PriceTag({Key? key, required this.price}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -85,7 +115,7 @@ class _PriceTag extends StatelessWidget {
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 10),
           child: Text(
-            'Price',
+            '$price',
             style: TextStyle(color: Colors.white, fontSize: 20),
           ),
         ),
@@ -102,6 +132,11 @@ class _PriceTag extends StatelessWidget {
 }
 
 class _ProductDetails extends StatelessWidget {
+  final String title;
+  final String subTitle;
+
+  const _ProductDetails({required this.title, required this.subTitle});
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -128,7 +163,7 @@ class _ProductDetails extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Name Product',
+              title,
               style: TextStyle(
                   fontSize: 18,
                   color: Colors.white,
@@ -138,7 +173,7 @@ class _ProductDetails extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
             ),
             Text(
-              'Caracteristic of product',
+              subTitle,
               style: TextStyle(fontSize: 14, color: Colors.white),
             )
           ],
@@ -156,6 +191,10 @@ class _ProductDetails extends StatelessWidget {
 }
 
 class _BackgroundImage extends StatelessWidget {
+  final String? urlImage;
+
+  const _BackgroundImage({Key? key, this.urlImage}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     // como vemos cuando usamos solo el Widget Container() y este tiene una imagen mas grande que el mismo Widget Container()
@@ -169,7 +208,9 @@ class _BackgroundImage extends StatelessWidget {
           // hasta que la carga de la imagen esperada sea cargada toalmente
           child: FadeInImage(
             placeholder: AssetImage('assets/jar-loading.gif'),
-            image: NetworkImage('https://via.placeholder.com/400x300/f6f6f6'),
+            // con este signo "!" le aseguramos a Dart que esta variable siempre tendra valor
+            // es por eso que debemos de asegurarnos que tenga dicho valor
+            image: NetworkImage(urlImage!),
             fit: BoxFit.cover,
           )),
     );
